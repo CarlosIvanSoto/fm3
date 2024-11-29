@@ -1,24 +1,20 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { UploadLogoService } from './upload-logo.service';
+import { UploadLogoController } from './upload-logo.controller';
 import { MulterModule } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { diskStorage } from 'multer';
 import { parse } from 'path';
-import { UploadLogoModule } from './upload-logo/upload-logo.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule,
     MulterModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         storage: diskStorage({
           destination: (req, file, cb) =>
-            cb(
-              null,
-              `./${configService.get<string>('MULTER_DEST', 'uploads')}`,
-            ),
+            cb(null, `./${configService.get<string>('LOGO_DEST', 'logos')}`),
           filename: (req, file, cb) => {
             const filename: string = parse(file.originalname).name.replace(
               /\s/g,
@@ -31,9 +27,8 @@ import { UploadLogoModule } from './upload-logo/upload-logo.module';
       }),
       inject: [ConfigService],
     }),
-    UploadLogoModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [UploadLogoController],
+  providers: [UploadLogoService],
 })
-export class AppModule {}
+export class UploadLogoModule {}

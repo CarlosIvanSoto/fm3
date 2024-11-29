@@ -35,4 +35,19 @@ describe('AppController (e2e)', () => {
       .expect(201)
       .expect(JSON.stringify(response, null));
   });
+
+  it('/upload/logo (POST)', () => {
+    const fileName = 'test.png';
+    const dest = process.env.LOGO_DEST ?? 'logos';
+    const response = {
+      originImage: `http://localhost:3000/${dest}/${fileName}`,
+      compressImage: `http://localhost:3000/${dest}/compress/${fileName}`,
+    };
+
+    return request(app.getHttpServer())
+      .post('/upload/logo')
+      .attach('file', `./assets/${fileName}`)
+      .expect(201)
+      .expect(JSON.stringify(response, null));
+  });
 });

@@ -5,15 +5,11 @@ import { join } from 'path';
 import * as sharp from 'sharp';
 
 @Injectable()
-export class AppService {
+export class UploadLogoService {
   constructor(private readonly configService: ConfigService) {}
 
-  getHello(): string {
-    return 'Hello World!';
-  }
-
   async compressImage(file: Express.Multer.File): Promise<string> {
-    const dest = this.configService.get<string>('MULTER_DEST', 'uploads');
+    const dest = this.configService.get<string>('LOGO_DEST', 'logos');
     const outputDir = join(process.cwd(), `${dest}/compress`);
     const fileName = file.filename;
     const filePath = join(outputDir, file.filename);
