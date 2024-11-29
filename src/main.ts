@@ -3,18 +3,22 @@ import { AppModule } from './app.module';
 import { static as ExpressStatic } from 'express';
 import { join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
-import { ConfigService } from '@nestjs/config';
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  const configService = app.get<ConfigService>(ConfigService);
-  const DEST = configService.get<string>('MULTER_DEST', 'uploads');
+function upsertDir() {
+  const dest = process.env.MULTER_DEST ?? 'uploads';
 
-  const uploadDir = join(process.cwd(), DEST, 'compress');
+  const uploadDir = join(process.cwd(), dest, 'compress');
   if (!existsSync(uploadDir)) {
     mkdirSync(uploadDir, { recursive: true });
   }
-  app.use(`/${DEST}`, ExpressStatic(join(process.cwd(), DEST)));
+  return dest;
+}
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  const dest = upsertDir();
+  app.use(`/${dest}`, ExpressStatic(join(process.cwd(), dest)));
+
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
