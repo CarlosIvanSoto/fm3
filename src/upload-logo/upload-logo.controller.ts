@@ -4,13 +4,16 @@ import {
   ParseFilePipeBuilder,
   Post,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { UploadLogoService } from './upload-logo.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
+import { ApplicationTokenGuard } from 'src/application-token/application-token.guard';
 
 @Controller('upload')
+@UseGuards(ApplicationTokenGuard)
 export class UploadLogoController {
   constructor(
     private readonly configService: ConfigService,

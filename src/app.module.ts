@@ -6,6 +6,7 @@ import { diskStorage } from 'multer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { parse } from 'path';
 import { UploadLogoModule } from './upload-logo/upload-logo.module';
+import { ApplicationTokenModule } from './application-token/application-token.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { UploadLogoModule } from './upload-logo/upload-logo.module';
       inject: [ConfigService],
     }),
     UploadLogoModule,
+    ApplicationTokenModule,
   ],
   controllers: [AppController],
   providers: [AppService],

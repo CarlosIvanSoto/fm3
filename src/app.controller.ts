@@ -1,9 +1,13 @@
 import {
+  Body,
   Controller,
   Get,
+  HttpCode,
   HttpStatus,
+  Param,
   ParseFilePipeBuilder,
   Post,
+  UnauthorizedException,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -21,6 +25,21 @@ export class AppController {
   @Get()
   getHello(): string {
     return this.appService.getHello();
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('app/register/:appName')
+  async registerApp(
+    @Param('appName') appName: string,
+    @Body() signDto: Record<string, any>,
+  ) {
+    const secret = this.configService.get<string>('SIGN_SECRET', 'fm3');
+    if (signDto.secret !== secret) throw new UnauthorizedException();
+    const token = await this.appService.generateNewAppToken(appName);
+    return {
+      appName,
+      token,
+    };
   }
 
   @Post('upload/image')

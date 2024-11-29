@@ -3,13 +3,23 @@ import { ConfigService } from '@nestjs/config';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
 import * as sharp from 'sharp';
+import { ApplicationTokenService } from './application-token/application-token.service';
 
 @Injectable()
 export class AppService {
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly applicationTokenService: ApplicationTokenService,
+  ) {}
 
   getHello(): string {
     return 'Hello World!';
+  }
+
+  async generateNewAppToken(appName: string) {
+    const token =
+      await this.applicationTokenService.createApplicationToken(appName);
+    return token;
   }
 
   async compressImage(file: Express.Multer.File): Promise<string> {

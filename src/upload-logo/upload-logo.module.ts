@@ -5,10 +5,12 @@ import { MulterModule } from '@nestjs/platform-express';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { diskStorage } from 'multer';
 import { parse } from 'path';
+import { ApplicationTokenModule } from 'src/application-token/application-token.module';
 
 @Module({
   imports: [
     ConfigModule,
+    ApplicationTokenModule,
     MulterModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
