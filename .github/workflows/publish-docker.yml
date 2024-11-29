@@ -48,24 +48,23 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=ref,event=tag
             type=pep440,pattern={{version}},value=${{ steps.tag_version.outputs.new_tag }}
             type=sha
 
-      - name: Build
-        uses: docker/bake-action@v5
-        with:
-          files: |
-            ./docker-bake.hcl
-            ${{ steps.meta.outputs.bake-file }}
-          targets: build
-
-      # - name: Build and push Docker image
-      #   uses: docker/build-push-action@v5
+      # - name: Build
+      #   uses: docker/bake-action@v5
       #   with:
-      #     context: .
-      #     push: ${{ github.event_name != 'pull_request' }}
-      #     tags: ${{ steps.meta.outputs.tags }}
-      #     labels: ${{ steps.meta.outputs.labels }}
-      #     cache-from: type=gha
-      #     cache-to: type=gha,mode=max
+      #     files: |
+      #       ./docker-bake.hcl
+      #       ${{ steps.meta.outputs.bake-file }}
+      #     targets: build
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
